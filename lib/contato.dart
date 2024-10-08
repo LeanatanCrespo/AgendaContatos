@@ -24,4 +24,9 @@ class Contato {
       email: json['email'],
     );
   }
+
+  @override
+  String toString() {
+    return 'Contato(nome: $nome, telefone: $telefone, email: $email)';
+  }
 }
