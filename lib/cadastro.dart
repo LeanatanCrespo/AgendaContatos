@@ -2,8 +2,6 @@ import 'package:agenda_contatos/contato.dart';
 import 'package:agenda_contatos/contatosRepository.dart';
 import 'package:flutter/material.dart';
 
-
-//tela para cadastro de contatos
 class Cadastro extends StatefulWidget {
   final ContatosRepository contatos;
   Cadastro({required this.contatos});
@@ -13,7 +11,6 @@ class Cadastro extends StatefulWidget {
 }
 
 class _CadastroState extends State<Cadastro> {
-  //pega o valor que sera digitado (nome, telefone, email e a classe inteira)
   final TextEditingController nomeController = TextEditingController();
   final TextEditingController telefoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -26,92 +23,51 @@ class _CadastroState extends State<Cadastro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-       //edita a barra de cima da pagina atual
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 16, 71, 61),
         title: Text('Cadastrar Contato'),
       ),
-
-      //corpo da tela
       body: Container(
-        //edição do fundo da tela
         decoration: BoxDecoration(
-          gradient: LinearGradient(//cor em degrade
-            begin: Alignment.topLeft, 
-            end: Alignment.bottomRight, 
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             colors: [
-              const Color.fromARGB(255, 192, 224, 219), // Cor inicial 
-              const Color.fromARGB(255, 80, 124, 206), // Cor final
+              const Color.fromARGB(255, 192, 224, 219),
+              const Color.fromARGB(255, 80, 124, 206),
             ],
           ),
         ),
-
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-
-          //campos a ser preenchido do contato
           child: Column(
             children: [
-
-              //nome do contato
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Nome'),
-                controller: nomeController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'O nome não pode ser vazio.';
-                  }
-                  return null;
-                },
+              _buildTextField('Nome', nomeController, 'O nome não pode ser vazio.'),
+              _buildTextField(
+                'Telefone',
+                telefoneController,
+                'Formato inválido. Use XX XXXXXXXX ou XX XXXXXXXXX.',
+                pattern: r'^\d{2} \d{8,9}$',
               ),
-
-              //telefone do contato
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Telefone'),
-                controller: telefoneController,
-                validator: (value) {
-                  final regex = RegExp(r'^\d{2} \d{8,9}$');
-                  if (value == null || !regex.hasMatch(value)) {
-                    return 'Formato inválido. Use XX XXXXXXXX ou XX XXXXXXXXX.';
-                  }
-                  return null;
-                },
-              ),
-
-              //email do contato
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Email'),
-                controller: emailController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'O email não pode ser vazio.';
-                  }
-                  return null;
-                },
-              ),
-
-              //tamanho  da caixa de campos
+              _buildTextField('Email', emailController, 'O email não pode ser vazio.'),
               SizedBox(height: 20),
-
-              //botão para salvar contato
               ElevatedButton(
                 onPressed: () {
-                  //validação
                   if (_formKey.currentState!.validate()) {
                     setState(() {
                       contatos.addContatos(
-                        //contato cadastrado
                         Contato(
                           nome: nomeController.text,
                           telefone: telefoneController.text,
-                          email: emailController.text));
+                          email: emailController.text,
+                        ),
+                      );
                     });
+                    _clearFields();
                     Navigator.pop(context);
                   }
                 },
-                //edição do botao
                 child: Text('Salvar'),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: const Color.fromARGB(255, 1, 30, 25),
@@ -123,5 +79,27 @@ class _CadastroState extends State<Cadastro> {
         ),
       ),
     );
+  }
+
+  // Método para construir cada campo de entrada com validação personalizada
+  Widget _buildTextField(
+      String label, TextEditingController controller, String errorMessage,
+      {String? pattern}) {
+    return TextFormField(
+      decoration: InputDecoration(labelText: label),
+      controller: controller,
+      validator: (value) {
+        if (value == null || value.isEmpty) return errorMessage;
+        if (pattern != null && !RegExp(pattern).hasMatch(value)) return errorMessage;
+        return null;
+      },
+    );
+  }
+
+  // Limpa os controladores após salvar o contato
+  void _clearFields() {
+    nomeController.clear();
+    telefoneController.clear();
+    emailController.clear();
   }
 }

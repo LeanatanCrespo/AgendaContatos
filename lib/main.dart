@@ -1,18 +1,14 @@
-import 'package:agenda_contatos/principal.dart';
 import 'package:flutter/material.dart';
+import 'package:agenda_contatos/tlogin.dart';
+import 'package:agenda_contatos/principal.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? username = prefs.getString('username');
 
-void main() {
-  runApp(MainApp());
+  runApp(MaterialApp(
+    home: username != null ? Principal() : LoginScreen(),
+  ));
 }
-
-class MainApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Principal(),
-    );
-  }
-}
-
-

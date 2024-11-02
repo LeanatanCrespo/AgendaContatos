@@ -1,9 +1,7 @@
-
-//classe contato
 class Contato {
-  String nome;
-  String telefone;
-  String email;
+  final String nome;
+  final String telefone;
+  final String email;
 
   Contato({required this.nome, required this.email, required this.telefone});
 
@@ -25,8 +23,33 @@ class Contato {
     );
   }
 
+  // Sobrescreve o operador == e o hashCode para comparação de objetos
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Contato &&
+          runtimeType == other.runtimeType &&
+          nome == other.nome &&
+          telefone == other.telefone &&
+          email == other.email;
+
+  @override
+  int get hashCode => nome.hashCode ^ telefone.hashCode ^ email.hashCode;
+
   @override
   String toString() {
     return 'Contato(nome: $nome, telefone: $telefone, email: $email)';
+  }
+
+  // Método para validar email (opcional)
+  bool isValidEmail() {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return emailRegex.hasMatch(email);
+  }
+
+  // Método para validar telefone (opcional)
+  bool isValidTelefone() {
+    final telefoneRegex = RegExp(r'^\d{2} \d{8,9}$');
+    return telefoneRegex.hasMatch(telefone);
   }
 }

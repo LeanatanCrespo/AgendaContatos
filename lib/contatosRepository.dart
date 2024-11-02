@@ -51,6 +51,72 @@ class ContatosRepository {
 
 /*
 import 'package:agenda_contatos/contato.dart';
+import 'package:agenda_contatos/contatoDAO.dart';
+import 'package:agenda_contatos/persistencia.dart';
+
+class ContatosRepository {
+  final List<Contato> _contatos = [];
+  final ContatoDAO contatoDAO = ContatoDAOImpl();
+
+  ContatosRepository() {
+    _carregarContatos();
+  }
+
+  // Carrega os contatos ao iniciar
+  Future<void> _carregarContatos() async {
+    try {
+      _contatos.clear();
+      _contatos.addAll(await contatoDAO.getAll());
+    } catch (e) {
+      print("Erro ao carregar contatos: $e");
+    }
+  }
+
+  // Adiciona um contato e o salva
+  Future<void> addContato(Contato c) async {
+    _contatos.add(c);
+    await _salvarContatos();
+  }
+
+  // Retorna a lista de contatos cadastrados
+  List<Contato> get contatos {
+    return List.unmodifiable(_contatos); // Retorna uma lista imutável para segurança
+  }
+
+  // Deleta um contato
+  Future<void> deleteContato(int index) async {
+    if (index >= 0 && index < _contatos.length) {
+      _contatos.removeAt(index);
+      await _salvarContatos();
+    }
+  }
+
+  // Edita um contato
+  Future<void> editaContato(int index, Contato c) async {
+    if (index >= 0 && index < _contatos.length) {
+      _contatos[index] = c;
+      await _salvarContatos();
+    }
+  }
+
+  // Salva a lista de contatos na memória
+  Future<void> _salvarContatos() async {
+    try {
+      await contatoDAO.insertAll(_contatos);
+    } catch (e) {
+      print("Erro ao salvar contatos: $e");
+    }
+  }
+
+  // Método para recarregar a lista de contatos (caso necessário)
+  Future<void> refreshContatos() async {
+    await _carregarContatos();
+  }
+}
+*/
+
+/*
+import 'package:agenda_contatos/contato.dart';
 import 'package:agenda_contatos/persistencia.dart';
 
 //repositorios do CRUD do codigo

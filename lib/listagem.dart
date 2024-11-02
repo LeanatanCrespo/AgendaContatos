@@ -1,12 +1,13 @@
 import 'package:agenda_contatos/contato.dart';
 import 'package:agenda_contatos/contatosRepository.dart';
 import 'package:agenda_contatos/editar.dart';
+import 'package:agenda_contatos/cadastro.dart'; // Importe a tela de cadastro
 import 'package:flutter/material.dart';
 
-
-//tela com a lista de contatos
+// Tela com a lista de contatos
 class Listagem extends StatefulWidget {
   final ContatosRepository contatos;
+
   Listagem({required this.contatos});
 
   @override
@@ -14,57 +15,69 @@ class Listagem extends StatefulWidget {
 }
 
 class ListagemState extends State<Listagem> {
-  //cria a variavel contatos a partir do contato repositorio
   final ContatosRepository contatos;
+
   ListagemState({required this.contatos});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      //edição da barra superior da tela
       appBar: AppBar(
-        title: Text('Lista de contatinhos'),
+        title: Text('Lista de Contatinhos'),
         backgroundColor: const Color.fromARGB(255, 16, 71, 61),
+        actions: [
+          // Botão para adicionar novos contatos
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Cadastro(contatos: contatos),
+                ),
+              ).then((_) {
+                setState(() {}); // Atualiza a lista ao voltar da tela de cadastro
+              });
+            },
+          ),
+        ],
       ),
-
-      //corpo da tela atual
       body: Container(
-
-        //edição do fundo da tela
-        decoration: BoxDecoration(//cor em degrade
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight, 
+            end: Alignment.bottomRight,
             colors: [
-              const Color.fromARGB(255, 192, 224, 219), // Cor inicial 
-              const Color.fromARGB(255, 80, 124, 206), // Cor final
+              const Color.fromARGB(255, 192, 224, 219),
+              const Color.fromARGB(255, 80, 124, 206),
             ],
           ),
         ),
-
-        // ListView.builder para exibir os contatos
-        child: ListView.builder(
-          itemCount: contatos.getContatos().length,
-          itemBuilder: (context, index) {
-            //busca pelos contatos
-            Contato c = contatos.getContatos()[index];
-            //mostra o contato buscado
-            return ListTile(
-              title: Text(c.nome),
-              subtitle: Text('${c.email} | ${c.telefone}'),
-              //permite acessar a edição de contato ao clicar em cima
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(//acessa a tela de edição
-                    builder: (context) => Editar(contatos: contatos, index: index),
-                  ),
-                );
-              },
-            );
-          },
-        ),
+        child: contatos.getContatos().isNotEmpty
+            ? ListView.builder(
+                itemCount: contatos.getContatos().length,
+                itemBuilder: (context, index) {
+                  Contato c = contatos.getContatos()[index];
+                  return ListTile(
+                    title: Text(c.nome),
+                    subtitle: Text('${c.email} | ${c.telefone}'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Editar(
+                            contatos: contatos,
+                            index: index,
+                          ),
+                        ),
+                      ).then((_) {
+                        setState(() {}); // Atualiza a lista após edição
+                      });
+                    },
+                  );
+                },
+              )
+            : Center(child: Text('Nenhum contato cadastrado.')),
       ),
     );
   }

@@ -2,10 +2,11 @@ import 'package:agenda_contatos/contato.dart';
 import 'package:agenda_contatos/contatosRepository.dart';
 import 'package:flutter/material.dart';
 
-//tela de edição de cintatos
+// Tela de edição de contatos
 class Editar extends StatefulWidget {
   final ContatosRepository contatos;
   final int index;
+
   Editar({required this.contatos, required this.index});
 
   @override
@@ -13,14 +14,12 @@ class Editar extends StatefulWidget {
 }
 
 class _EditarState extends State<Editar> {
-  //pega o valor que sera digitado (nome, telefone e email)
   late TextEditingController nomeController;
   late TextEditingController telefoneController;
   late TextEditingController emailController;
-
+  
   final _formKey = GlobalKey<FormState>();
 
-  //deixa o formulario de contato ja preenchido
   @override
   void initState() {
     super.initState();
@@ -31,38 +30,37 @@ class _EditarState extends State<Editar> {
   }
 
   @override
+  void dispose() {
+    // Libera os controladores quando não forem mais necessários
+    nomeController.dispose();
+    telefoneController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      //edita a barrinha superior da tela
       appBar: AppBar(
         title: Text('Editar Contato'),
         backgroundColor: const Color.fromARGB(255, 16, 71, 61),
       ),
-
-      //corpo da tela
       body: Container(
-        //edição do fundo da tela
         decoration: BoxDecoration(
-          gradient: LinearGradient(//cor em degrade
+          gradient: LinearGradient(
             begin: Alignment.topLeft, 
             end: Alignment.bottomRight,
             colors: [
-              const Color.fromARGB(255, 192, 224, 219), // Cor inicial 
-              const Color.fromARGB(255, 80, 124, 206), // Cor final
+              const Color.fromARGB(255, 192, 224, 219), 
+              const Color.fromARGB(255, 80, 124, 206), 
             ],
           ),
         ),
-
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-
-          //campos a ser preenchido do contato
           child: Column(
             children: [
-
-              //nome contato
               TextFormField(
                 decoration: InputDecoration(labelText: 'Nome'),
                 controller: nomeController,
@@ -73,8 +71,6 @@ class _EditarState extends State<Editar> {
                   return null;
                 },
               ),
-
-              //telefone do contato
               TextFormField(
                 decoration: InputDecoration(labelText: 'Telefone'),
                 controller: telefoneController,
@@ -86,8 +82,6 @@ class _EditarState extends State<Editar> {
                   return null;
                 },
               ),
-
-              //email do contato
               TextFormField(
                 decoration: InputDecoration(labelText: 'Email'),
                 controller: emailController,
@@ -98,44 +92,43 @@ class _EditarState extends State<Editar> {
                   return null;
                 },
               ),
-
-              //tamanho  da caixa de campos
               SizedBox(height: 20),
-
-              //botão mpara salvar contato editado
               ElevatedButton(
                 onPressed: () {
-                  //validação
                   if (_formKey.currentState!.validate()) {
-                    setState(() {
+                    try {
                       widget.contatos.editaContato(
-                          widget.index,
-                          //contato editado
-                          Contato(
-                              nome: nomeController.text,
-                              telefone: telefoneController.text,
-                              email: emailController.text));
-                    });
-                    Navigator.pop(context);
+                        widget.index,
+                        Contato(
+                          nome: nomeController.text,
+                          telefone: telefoneController.text,
+                          email: emailController.text,
+                        ),
+                      );
+                      Navigator.pop(context, true); // Retorna um valor indicando que houve alteração
+                    } catch (e) {
+                      print("Erro ao editar contato: $e");
+                      // Adicione tratamento de erro conforme necessário
+                    }
                   }
                 },
-                //edição do botao
                 child: Text('Salvar'),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: const Color.fromARGB(255, 1, 30, 25),
                   backgroundColor: const Color.fromARGB(255, 16, 71, 61),
                 ),
               ),
-
-              //botao para deletar contato
+              SizedBox(height: 10), // Espaçamento entre os botões
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
+                  try {
                     widget.contatos.deleteContato(widget.index);
-                  });
-                  Navigator.pop(context);
+                    Navigator.pop(context, true); // Retorna um valor indicando que o contato foi deletado
+                  } catch (e) {
+                    print("Erro ao deletar contato: $e");
+                    // Adicione tratamento de erro conforme necessário
+                  }
                 },
-                //edicção do contato
                 child: Text('Deletar'),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: const Color.fromARGB(255, 1, 30, 25),

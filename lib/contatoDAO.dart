@@ -10,3 +10,4 @@ abstract class ContatoDAO {
   //função para colocar lista de contatos
   Future<void> insertAll(List<Contato> contatos);
 }
+
